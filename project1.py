@@ -12,8 +12,7 @@ class Login:
         )
 
         mycursor = my_db.cursor()
-        query = "create table if not exists login_pass (id int unsigned auto_increment primary key, name varchar(20)\
-         not null, login varchar not null, password varchar not null)"
+        query = "create table if not exists login_pass (id int unsigned auto_increment primary key, name varchar(20) not null, login varchar(12) not null, password varchar(12) not null)"
         mycursor.execute(query)
         my_db.commit()
         os.system('cls')
@@ -48,7 +47,7 @@ class Login:
             name_input = input("Xatolik! Ismingiz? ").strip()
         login_input = input("Login: ").strip()
         password_input = input("Parol: ").strip()
-        query = f"select login from login_pass where password={password_input}"
+        query = f"select * from login_pass where login='{login_input}'"
         mycursor.execute(query)
         datas = mycursor.fetchall()
         while datas or not login_input or not password_input:
@@ -81,11 +80,71 @@ class Login:
             self.log_out()
 
     def login_(self):
-        pass
+        my_db = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="sqlok2002",
+            database="w6"
+        )
+
+        mycursor = my_db.cursor()
+        os.system('cls')
+        user_log = input("Login: ").strip()
+        user_pass = input("Password: ").strip()
+        query = f"select password from login_pass where login='{user_log}'"
+        mycursor.execute(query)
+        datas = mycursor.fetchall()
+        quitt = 5
+        while not datas or not user_pass or not user_log or user_pass != datas[0][0]:
+            user_log = input("Xato! Login: ").strip()
+            user_pass = input("Password: ").strip()
+            query = f"select password from login_pass where login='{user_log}'"
+            mycursor.execute(query)
+            datas = mycursor.fetchall()
+            quitt -= 1
+            if quitt == 0:
+                print("Dang! Keyinroq harakat qilib ko'ring")
+                time.sleep(3)
+                quit()
+        query = f"select name from login_pass where login='{user_log}'"
+        mycursor.execute(query)
+        datas = mycursor.fetchall()
+        os.system('cls')
+        user_inp = input(f"""
+                Tabriklaymiz, {datas[0][0]} siz tizimdasiz
+                1. Update login
+                2. Update password
+                3. Log out
+                4. Delete account
+                """).strip()
+        os.system('cls')
+        if user_inp == '1':
+            self.update_login(user_log)
+        elif user_inp == '2':
+            self.update_pass(user_pass)
+        elif user_inp == '3':
+            self.log_out()
+        elif user_inp == '4':
+            self.delete_acc()
+        else:
+            self.log_out()
 
     def update_login(self, old_log):
-        pass
+        my_db = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="sqlok2002",
+            database="w6"
+        )
 
+        mycursor = my_db.cursor()
+        os.system('cls')
+
+
+
+
+
+        
     def update_pass(self, old_pass):
         pass
 
@@ -95,3 +154,5 @@ class Login:
     def delete_acc(self):
         pass
 
+user = Login()
+user.initial_mes()
