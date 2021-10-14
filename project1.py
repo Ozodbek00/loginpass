@@ -1,4 +1,4 @@
-
+import os
 import mysql.connector
 
 
@@ -15,17 +15,18 @@ class Login:
         query = "create table if not exists login_pass (id int unsigned auto_increment primary key, name varchar(20)\
          not null, login varchar not null, password varchar not null)"
         mycursor.execute(query)
-
-        user_input = """
+        my_db.commit()
+        os.system('cls')
+        user_input = input("""
         1. Registratsiya
         2.Login
-        """
+        """).strip()
         while user_input not in ['1', '2']:
-            user_input = """
+            user_input = input("""
         Xato!
         1. Registratsiya
         2.Login
-        """
+        """).strip()
         if user_input == '1':
             self.register()
 
@@ -33,7 +34,31 @@ class Login:
             self.login_()
 
     def register(self):
-        pass
+        my_db = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="sqlok2002",
+            database="w6"
+        )
+
+        mycursor = my_db.cursor()
+
+        name_input = input("Ismingiz: ").strip()
+        while not name_input:
+            name_input = input("Xatolik! Ismingiz? ").strip()
+        login_input = input("Login: ").strip()
+        password_input = input("Parol: ").strip()
+        query = f"select login from login_pass where password={password_input}"
+        mycursor.execute(query)
+        datas = mycursor.fetchall()
+        while datas or not login_input or not password_input:
+            os.system('cls')
+            print("Xatolik! Login va password ni qayta kiriting: ")
+            login_input = input().strip()
+            password_input = input().strip()
+        
+
+
 
     def login_(self):
         pass
