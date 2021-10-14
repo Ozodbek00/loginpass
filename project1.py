@@ -140,13 +140,33 @@ class Login:
         mycursor = my_db.cursor()
         os.system('cls')
 
+        new_log = input("Yangi loginingizni kiriting: ").strip()
+        query = f"select login from login_pass where login='{new_log}'"
+        mycursor.execute(query)
+        datas = mycursor.fetchall()
+        while datas:
+            new_log = input("Yangi loginingizni kiriting: ").strip()
+            query = f"select login from login_pass where login='{new_log}'"
+            mycursor.execute(query)
+            datas = mycursor.fetchall()
+        query = f"update login_pass set login='{new_log}' where login='{old_log}'"
+        mycursor.execute(query)
+        my_db.commit()
+        self.initial_mes()
 
 
 
-
-        
     def update_pass(self, old_pass):
-        pass
+        my_db = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="sqlok2002",
+            database="w6"
+        )
+
+        mycursor = my_db.cursor()
+        os.system('cls')
+
 
     def log_out(self):
         pass
