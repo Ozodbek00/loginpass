@@ -1,6 +1,6 @@
 import os
 import mysql.connector
-
+import time
 
 class Login:
     def initial_mes(self):
@@ -56,17 +56,37 @@ class Login:
             print("Xatolik! Login va password ni qayta kiriting: ")
             login_input = input().strip()
             password_input = input().strip()
-        
-
-
+        query = f'insert into login_pass (name, login, password)\
+         values ("{name_input}", "{login_input}", "{password_input}")'
+        mycursor.execute(query)
+        my_db.commit()
+        os.system('cls')
+        user_inp = input(f"""
+        Tabriklaymiz, {name_input} siz registratsiyadan o'tdingiz
+        1. Update login
+        2. Update password
+        3. Log out
+        4. Delete account
+        """).strip()
+        os.system('cls')
+        if user_inp == '1':
+            self.update_login(login_input)
+        elif user_inp == '2':
+            self.update_pass(password_input)
+        elif user_inp == '3':
+            self.log_out()
+        elif user_inp == '4':
+            self.delete_acc()
+        else:
+            self.log_out()
 
     def login_(self):
         pass
 
-    def update_login(self):
+    def update_login(self, old_log):
         pass
 
-    def update_pass(self):
+    def update_pass(self, old_pass):
         pass
 
     def log_out(self):
