@@ -12,7 +12,8 @@ class Login:
         )
 
         mycursor = my_db.cursor()
-        query = "create table if not exists login_pass (id int unsigned auto_increment primary key, name varchar(20) not null, login varchar(12) not null, password varchar(12) not null)"
+        query = "create table if not exists login_pass (id int unsigned auto_increment primary key, \
+        name varchar(20) not null, login varchar(12) not null, password varchar(12) not null)"
         mycursor.execute(query)
         my_db.commit()
         os.system('cls')
@@ -71,11 +72,11 @@ class Login:
         if user_inp == '1':
             self.update_login(login_input)
         elif user_inp == '2':
-            self.update_pass(password_input)
+            self.update_pass(login_input, password_input)
         elif user_inp == '3':
             self.log_out()
         elif user_inp == '4':
-            self.delete_acc()
+            self.delete_acc(login_input)
         else:
             self.log_out()
 
@@ -121,11 +122,11 @@ class Login:
         if user_inp == '1':
             self.update_login(user_log)
         elif user_inp == '2':
-            self.update_pass(user_pass)
+            self.update_pass(user_log, user_pass)
         elif user_inp == '3':
             self.log_out()
         elif user_inp == '4':
-            self.delete_acc()
+            self.delete_acc(user_log)
         else:
             self.log_out()
 
@@ -144,7 +145,7 @@ class Login:
         query = f"select login from login_pass where login='{new_log}'"
         mycursor.execute(query)
         datas = mycursor.fetchall()
-        while datas:
+        while datas or not new_log:
             new_log = input("Yangi loginingizni kiriting: ").strip()
             query = f"select login from login_pass where login='{new_log}'"
             mycursor.execute(query)
@@ -154,9 +155,7 @@ class Login:
         my_db.commit()
         self.initial_mes()
 
-
-
-    def update_pass(self, old_pass):
+    def update_pass(self, loggg, old_pass):
         my_db = mysql.connector.connect(
             host="localhost",
             user="root",
@@ -166,13 +165,52 @@ class Login:
 
         mycursor = my_db.cursor()
         os.system('cls')
-
+        new_pass = input("Yangi parol kiriting: ").strip()
+        while not new_pass or new_pass == old_pass:
+            new_pass = input("Yangi parol kiriting: ").strip()
+        query = f"update login_pass set password ='{new_pass}' where login='{loggg}'"
+        mycursor.execute(query)
+        my_db.commit()
+        os.system('cls')
+        user_inp = input(f"""
+                        Tabriklaymiz,  sizning parolingiz o'zgardi ****
+                        1. Update login
+                        2. Update password
+                        3. Log out
+                        4. Delete account
+                        """).strip()
+        os.system('cls')
+        if user_inp == '1':
+            self.update_login(loggg)
+        elif user_inp == '2':
+            self.update_pass(loggg, new_pass)
+        elif user_inp == '3':
+            self.log_out()
+        elif user_inp == '4':
+            self.delete_acc(loggg)
+        else:
+            self.log_out()
 
     def log_out(self):
-        pass
+        print("Salomat bo'ling")
+        time.sleep(3)
+        quit()
 
-    def delete_acc(self):
-        pass
+    def delete_acc(self, login):
+        my_db = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="sqlok2002",
+            database="w6"
+        )
+
+        mycursor = my_db.cursor()
+        query = f"delete from login_pass where login='{login}'"
+        mycursor.execute(query)
+        my_db.commit()
+        print("5 soniyadan keyin siz tizimdan chiqib ketasiz")
+        time.sleep(5)
+
 
 user = Login()
 user.initial_mes()
